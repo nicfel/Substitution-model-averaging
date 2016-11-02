@@ -2,6 +2,11 @@
 \input{preamble}
 
 
+%%% added package
+\usepackage{tikz}
+%%%
+
+
 
 % Add your bibtex library here
 \addbibresource{master_refs.bib}
@@ -24,15 +29,15 @@
 \begin{center}
 
 	% Enter the name of your tutorial here
-	\textbf{\LARGE Tuturial Template}\\\vspace{2mm}
+	\textbf{\LARGE Substitution model selection in BEAST2}\\\vspace{2mm}
 
 	% Enter a short description of your tutorial here
-	\textbf{\textcolor{mycol}{\Large This is a template \LaTeX{} tutorial for Taming the BEAST}}\\
+	\textbf{\textcolor{mycol}{\Large A tutorial using bModelTest}}\\
 
 	\vspace{4mm}
 
 	% Enter the names of all the authors here
-	{\Large {\em Author I. Name}}
+	{\Large {\em David A. Rasmussen, Carsten Magnus and Remco Bouckaert}}
 \end{center}
 
 
@@ -41,180 +46,232 @@
 %%%%%%%%%%%%%%%%%
 
 
-
-% Always put \bigskip before a new section that does not start on a new page
 \bigskip
 \section{Background}
-\label{sec:background}
 
-This is a style guide to help formatting LaTeX tutorials. Please add some background about the tutorial in this section, clearly explaining the question/problem and the type of analysis that the methods in the tutorial should be used for. In the next section please add a short description of all the programs or packages used in the tutorial. 
+Before running any phylogenetic analysis in BEAST, we need to decide on a model of molecular evolution that describes how our sequence data evolved. In particular, we need to decide on a substitution model that describes the relative rates at which different types of substitutions occur. For nucleotide data, the substitution model is typically represented as a 4x4 symmetric rate matrix $Q$ with the general form:
+\begin{equation}
+	Q =
+	\begin{pmatrix}
+		- & r_{ac} & r_{ag} & r_{at} \\
+		r_{ac} & - & r_{cg} & r_{ct} \\
+		r_{ag} & r_{cg} & - & r_{gt} \\
+		r_{at} & r_{ct} & r_{gt} & - \\
+	\end{pmatrix}
+	\label{rateMatrixQ}
+\end{equation}
+The different named substitution models (e.g. JC69, HKY, TN93 and GTR) group these rates into different categories. For example, the JC69 model groups all rates together into a single rate category whereas the GTR model assigns each rate to a different category. We are therefore faced with the difficult choice of deciding \textit{a priori} which one of these substitution models is most appropriate for our data.
 
-Most of the text in this tutorial template is just dummy filler text. Please do not try to understand it.
+\begin{framed}
+\textbf{Topic for discussion:} In terms of phylogenetic inference, what would be the consequence of picking a substitution model that is overparameterized (too complex) for a given data set? What would be the consequence of picking a model that is underparameterized? 
+\end{framed}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce porta augue id vulputate iaculis. Sed non posuere lectus. Integer at magna quis nulla tempus cursus. Integer ut nisl elit. Nam pellentesque pharetra orci eu facilisis. Nullam vitae leo tempus nunc consequat finibus ut ut nisi. Phasellus vitae faucibus dolor, id venenatis lacus. Sed eu lacus a nibh luctus semper. Proin non tellus odio. Duis elementum lorem eget nisl rhoncus feugiat. In hendrerit vehicula purus. Aliquam ornare libero quis tincidunt efficitur. Nam sapien augue, mattis nec hendrerit ut, commodo in nisi.
+In addition to the substitution model, we also need to decide whether to include rate heterogeneity across sites. We also might want to include a proportion of invariant sites. On top of all this, we need to decide whether to estimate nucleotide base frequencies or fix them at their empirical frequencies. All of these choices leads to a bewildering number of different models to choose from. For this reason, researchers have often based their model choice on common conventions rather than on which model is most appropriate for their data.   
+
+Fortunately, nowadays we can be more sophisticated in our modeling choices and let the data inform us about which model is most appropriate using Bayesian model selection. In this tutorial, we will use BEAST's model selection tool bModelTest \citep{bouckaert2015bmodeltest} to select which substitution model is most appropriate for the primate mitochondrial data set we already saw in the introductory tutorial. bModelTest uses reversible jump MCMC (rjMCMC), which allows the Markov chain to jump between states representing different possible substitution models much like we jump between different parameter states in standard Bayesian MCMC inference. This allows us to explore the space of different models while simultaneously estimating model parameters and the phylogeny. Best of all, the proportion of time the Markov chain spends in a particular model state can be interpreted as the posterior support for that model, which tells us how much the data and our prior beliefs support the model over other competing models.
 
 
-
-
-
-
-% Use \clearpage to ensure that a new page is started and all figures are 
-% printed before the next section
 \clearpage
-\section{Programs used in this Exercise}
-\label{sec:programs}
+\newpage
+\section{Programs used in this Exercise}\label{programsSec}
 
-\descriptionhead{BEAST -- Bayesian Evolutionary Analysis Sampling Trees}
-
-BEAST2 is a free software package for Bayesian evolutionary analysis of molecular sequences using MCMC and strictly oriented toward inference using rooted, time-measured phylogenetic trees \citep{Bouckaert2014}. This tutorial uses the BEAST2 version 2.4.2.
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This is the real start of the tutorial %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\clearpage
-\section{Practical: Exercise title}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce porta augue id vulputate iaculis. Sed non posuere lectus. Integer at magna quis nulla tempus cursus. Integer ut nisl elit. Nam pellentesque pharetra orci eu facilisis. Nullam vitae leo tempus nunc consequat finibus ut ut nisi. Phasellus vitae faucibus dolor, id venenatis lacus. Sed eu lacus a nibh luctus semper. Proin non tellus odio. Duis elementum lorem eget nisl rhoncus feugiat. In hendrerit vehicula purus. Aliquam ornare libero quis tincidunt efficitur. Nam sapien augue, mattis nec hendrerit ut, commodo in nisi.
-
-
-\bigskip
-\subsection{This is a subsection}
-Quisque a dictum erat. Curabitur congue sapien sit amet pharetra pretium. Proin posuere euismod velit, eget faucibus ex varius id. Fusce sodales maximus malesuada. Mauris auctor dui in justo interdum egestas. Cras dapibus commodo nulla vitae congue. Vestibulum sit amet justo sit amet ex pretium bibendum. Donec ac mollis lorem, vel semper enim. Suspendisse sit amet auctor dui. Nullam ac efficitur mauris. Proin aliquam tincidunt felis nec semper. Vestibulum vestibulum, eros sit amet consectetur blandit, elit dolor posuere sem, a porta purus odio sit amet quam. Quisque dapibus erat sem, at vulputate libero dapibus sit amet. Mauris rhoncus odio nisl, nec interdum lacus consequat nec. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
-
-Etiam tincidunt porttitor rutrum. Nulla facilisi. Mauris vehicula, justo ac ultricies tempus, quam erat hendrerit dui, vel pharetra sapien nibh vel ex. Sed molestie eu dui in laoreet. Pellentesque ultrices, orci vitae lacinia suscipit, erat sapien elementum ligula, sit amet viverra ante lorem eget elit. Cras euismod felis libero, pharetra lobortis arcu congue vehicula. Nullam posuere dapibus mauris, eget vulputate ligula auctor eget. Aenean et tempus est. Aliquam vehicula arcu vitae metus dictum viverra. Aliquam vitae purus mauris. Nullam interdum mauris eget sagittis consequat. Quisque in orci elementum, eleifend tortor eget, bibendum orci. Etiam aliquet dolor non neque semper fermentum. Praesent vitae venenatis mi, ut faucibus ligula. Phasellus vitae lorem neque. Interdum et malesuada fames ac ante ipsum primis in faucibus.
-
-\bigskip
-\subsection{This is another subsection}
-Etiam posuere urna ut condimentum sagittis. Suspendisse posuere, ex nec eleifend fringilla, nisl augue posuere augue, elementum mollis justo felis sed purus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris efficitur eros ut turpis elementum vestibulum. Sed sit amet nisi at nunc luctus laoreet id ac enim. Aliquam elementum risus id urna dictum fringilla. Aenean lobortis, risus euismod molestie pulvinar, massa odio pharetra nulla, vitae facilisis neque magna sed lorem. Praesent ipsum enim, commodo ut pharetra in, sollicitudin ac massa. Donec et interdum mauris. Ut molestie, risus quis fermentum placerat, diam risus posuere nisi, eget viverra tortor neque ac sem. Donec viverra magna non dolor aliquam, in suscipit massa facilisis. Suspendisse congue arcu sed risus consectetur commodo. Aenean metus odio, volutpat at tincidunt id, ullamcorper in dui. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras ut sem in odio sodales iaculis non quis neque.
-
-Quisque non mollis massa, nec eleifend dolor. Proin porta elit metus, a lobortis enim venenatis ac. Nam scelerisque consectetur mi et gravida. Vestibulum placerat, est vitae euismod finibus, purus nisl viverra quam, eget condimentum mauris magna vel nisl. Phasellus pretium vitae diam in volutpat. Cras gravida non quam ut consectetur. Vivamus congue vulputate lorem.
-
-
-\bigskip
-\section{Lists}
-
-
-\bigskip
-\subsection{Unnumbered lists}
-
+%\vspace{-4mm}
 \begin{itemize}
-	\item Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-	\item Integer pharetra arcu ut nisl mollis ultricies.
-	\begin{itemize}
-		\item Fusce nec tortor at enim cursus dictum.
-		\item Phasellus nec urna quis velit eleifend convallis sodales nec augue.
-	\end{itemize}
-	\item In iaculis turpis in massa facilisis, quis ultricies nibh ultricies.
-	\item Nam vitae turpis eu lacus imperdiet mollis id at augue.
-	\item Sed sed turpis ac dolor mollis accumsan.
+\item BEAUTi 2.4 %\vspace{-3mm}
+\item BEAST 2.4 %\vspace{-3mm}
+\item Tracer v. 1.6 %\vspace{-3mm}
+\item bModelTest v. 0.3.2 (installed during this tutorial)
 \end{itemize}
 
 
+%\newpage
+\section{Practical: Selecting a substitution model}
 
 \bigskip
-\subsection{Numbered lists}
+\subsection{Installing the bModelTest Package}
 
-\begin{enumerate}
-	\item Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-	\item Integer pharetra arcu ut nisl mollis ultricies.
-	\begin{enumerate}
-		\item Fusce nec tortor at enim cursus dictum.
-		\item Phasellus nec urna quis velit eleifend convallis sodales nec augue.
-	\end{enumerate}
-	\item In iaculis turpis in massa facilisis, quis ultricies nibh ultricies.
-	\item Nam vitae turpis eu lacus imperdiet mollis id at augue.
-	\item Sed sed turpis ac dolor mollis accumsan.
-\end{enumerate}
-
-
-
-
-
-\bigskip
-\section{Figures}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale=0.5]{figures/Logo_bw.png}
-	\caption{\small Figure caption example}
-	\label{fig:example}
-\end{figure}
-
-Praesent sodales est in tempor commodo. Suspendisse nulla metus, gravida eget malesuada vel, viverra eu felis. In vitae leo facilisis, ornare nunc nec, tempor tortor. Duis pretium mi eros, at consequat neque tincidunt eget. Mauris vestibulum venenatis arcu, eget lacinia arcu faucibus ut. Phasellus aliquam dui ipsum, a eleifend lacus fermentum at. Suspendisse congue orci quis ante consequat ornare. Integer a massa blandit, vestibulum eros ut, pulvinar augue. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
-
-Quisque a urna a massa congue rhoncus. Donec bibendum tempus velit. Nam varius augue sit amet lacinia hendrerit. Proin tincidunt massa ut mi vestibulum placerat. Phasellus eget dui molestie, aliquet libero efficitur, vehicula ex. Pellentesque ultricies ante leo, eu lobortis odio convallis id. Donec vitae risus dui. Nulla orci velit, ultricies sed finibus quis, blandit quis arcu. Morbi non neque non odio rutrum condimentum. Vivamus libero metus, vehicula vitae elit ac, tincidunt pretium dui. Proin condimentum fringilla diam, blandit blandit nisl dapibus vel. Proin ante felis, accumsan eget ligula et, lobortis dictum nunc. Mauris a ante dignissim ipsum tincidunt tristique.
-
-
-\bigskip
-\section{Instructions}
-
-Use framed boxes for step-by-step instructions:
+We first have to install the bModelTest version 0.3.2 package.
 
 \begin{framed}
-	
-	Type the following lines into your terminal:
-	\begin{itemize}
-		\item Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-		\item Integer pharetra arcu ut nisl mollis ultricies.
-		\item In iaculis turpis in massa facilisis, quis ultricies nibh ultricies.
-		\item Nam vitae turpis eu lacus imperdiet mollis id at augue.
-		\item Sed sed turpis ac dolor mollis accumsan.
-	\end{itemize}
-	Nothing interesting will happen.
+Open BEAUti and navigate to \mi{File\textrightarrow Manage Packages}. Select bModelTest and then click \mi{Install/Upgrade} [Figure \ref{fig:install}]. Then {\textcolor{red}{\underline{\bf restart BEAUti}}} to load the package.
+%\begin{center}
+%\href{google.com}{URL} 
+%\end{center}
+\end{framed} 
 
-\end{framed}
-
-Use lstlisting boxes for inserting code in different languages:
-
-\begin{lstlisting}[language=java]
-public class HelloWorld {
-
-    public static void main(String[] args) {
-        // Prints "Hello, World" to the terminal window.
-        System.out.println("Hello, World");
-    }
-
-}
-\end{lstlisting}
-
-
-\begin{lstlisting}[language=XML]
-	<BirthDeathSkylineModel spec="BirthDeathSkylineModel" id="birthDeath" tree="@tree" contemp="true">
-	      <parameter name="origin" id="origin" value ="100" lower="0."/>    
-	      <parameter name="R0" id="R0" value="2" lower="0." dimension ="10"/>
-	      <parameter name="becomeUninfectiousRate" id="becomeUninfectiousRate" value="1" lower="0." dimension ="10"/>
-	      <parameter name="samplingProportion" id="samplingProportion" value="0."/>
-	      <parameter name="rho" id="rho" value="1e-6" lower="0." upper="1."/>
-	</BirthDeathSkylineModel>
-\end{lstlisting}
-
-\begin{lstlisting}[language=R]
-	> myString <- "Hello, World!"
-	> print (myString)
-	[1] "Hello, World!"
-\end{lstlisting}
+\begin{figure}[!htbp]
+\centering
+\fbox{\includegraphics[scale=0.7]{figures/install_bModelTest}}
+\caption{\small Installing bModelTest in the Manage Packages window in BEAUti}
+\label{fig:install}
+\end{figure}
 
 \bigskip
-\section{Hyperlinks}
+\subsection{The Data}
 
-You can refer to labelled sections like this, section~\ref{sec:background} and section~\ref{sec:programs}. You can also refer to figures, like this: figure~\ref{fig:example}. Add links to external URLs like \href{http://www.google.com}{this}. 
+We will continue analyzing the primate mitochondrial data set from the introductory tutorial.
+
+\begin{framed}
+Open BEAUti and navigate to \mi{File\textrightarrow Load}. Select the file \textbf{primate-mtDNA.nex}. %If you do not already have this nexus file, it is available here: \href{datasource}{TO ADD}
+%\begin{center}
+%\href{google.com}{URL} 
+%\end{center}
+\end{framed}
+
+\bigskip
+\subsection{Setting up the analysis in BEAUti}
+
+In this tutorial, we will simplify things by having all four partitions in the alignment evolve under the same Site, Clock and Tree models.  
+
+\begin{framed}
+In the \mi{Partitions} panel select all four partitions and then click \mi{Link Site Models}, \mi{Link Clock Models} and \mi{Link Trees}. You should rename each model something more informative than noncoding, such as \textbf{site}, \textbf{clock} and \textbf{tree}. 
+\end{framed}
+
+The Partition window should now look like Figure \ref{fig:partitions}.
+
+\begin{figure}[!h]
+\centering
+\fbox{\includegraphics[scale=0.7]{figures/partitions}}
+\caption{\small Linking the Site Model across partitions in BEAUti.}
+\label{fig:partitions}
+\end{figure}
+
+Now we want to set up our Site Model to run the model selection analysis.
+
+\begin{framed}
+Click the \mi{Site Model} tab in BEAUti and then select the drop down box at the top which says \textbf{Gamma Site Model} and change it to \textbf{BEAST ModelTest} [Figure \ref{fig:siteModel}]. Select estimate in the box next to the Mutation Rate.
+\end{framed}
+
+\begin{figure}[!htbp]
+\centering
+\fbox{\includegraphics[scale=0.7]{figures/siteModel}}
+\caption{\small Setting up the BEAST ModelTest.}
+\label{fig:siteModel}
+\end{figure}
+
+In the lower drop down box we will keep \textbf{transitionTransversionSplit} selected. This tells bModelTest to only consider substitution models that differentiate between transitions (A $\rightarrow$ G and C $\rightarrow$ T) and transversions (all other substations). Considering all the different ways we can group the rates in the substitution matrix \eqref{rateMatrixQ}, there are a total of 203 reversible models with symmetric matrices \citep{bouckaert2015bmodeltest}. However, if we only consider models that do not group transitions together with transversions, there are only 31 models. Selecting \textbf{transitionTransversionSplit} therefore dramatically reduces the number of models that we need to explore.
+
+In the \mi{Clock Model} and \mi{Prior} tabs, we do not need to change any of the default settings for this tutorial.
+
+\begin{framed}
+Click the \mi{MCMC} tab in BEAUti. Change the chain length to 10,000,000. Change the tracelog and treelog file names to \textbf{primate-mtDNA-bMT} and then click \mi{File\textrightarrow Save As} and save as \textbf{primate-mtDNA-bMT.xml}.
+\end{framed}
+
+\bigskip
+\subsection{Run the analysis in BEAST}
+
+\begin{framed}
+Open BEAST and choose \textbf{primate-mtDNA-bMT.xml} as the BEAST XML File [Figure \ref{fig:beastRun}]. Then click run.
+\end{framed}
+
+\begin{figure}[!htbp]
+\centering
+\fbox{\includegraphics[scale=0.4]{figures/beastRun}}
+\caption{\small Running the analysis in BEAST.}
+\label{fig:beastRun}
+\end{figure}
+
+\bigskip
+\subsection{Analyzing the output in Tracer}
+
+\begin{framed}
+Open the \textbf{primate-mtDNA-bMT.log} file in Tracer. There should be a long list of entries in the window on the left hand side [Figure \ref{fig:modelTrace}].
+\end{framed}
+
+If we select \textbf{BMT\_ModelIndicator} from the list of entries and then \textbf{(I)nt} for the Data type below, we can see how the Markov chain explored the space of different models by jumping between substitution models. This is best seen if we click on the \mi{Trace} tab [Figure \ref{fig:modelTrace}]. Here, the sampled integer values refer to the indexes of the different substitution models. To see which index corresponds to which model, refer to [Figure \ref{fig:modelIndexes}].
+
+Now click on the \mi{Estimates} tab above. This frequency histogram shows us how much time the Markov chain spent in each model state relative to other model states, and therefore reflects the posterior support for each model. We can see that the chain spent the most time in model number 1 [Figure \ref{fig:modelPosterior}], which by consulting [Figure \ref{fig:modelIndexes}] we see corresponds to the HKY model. 
+
+\begin{figure}[!htbp]
+\centering
+\fbox{\includegraphics[scale=0.7]{figures/modelTrace}}
+\caption{\small Visualizing how the Markov chain explored different models in Tracer.}
+\label{fig:modelTrace}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\fbox{\includegraphics[scale=0.7]{figures/modelIndexes}}
+\caption{\small A list of substitution models, their associated model number (index) and how the substitution rates are grouped.}
+\label{fig:modelIndexes}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\fbox{\includegraphics[scale=0.7]{figures/modelPosterior}}
+\caption{\small Visualizing the posterior support for different substitution models in Tracer.}
+\label{fig:modelPosterior}
+\end{figure}
+
+We can also use the output of our analysis to see if a model with (gamma) rate heterogeneity and/or a proportion of invariant sites is supported. If we select \textbf{hasGammaRates} in the window on the left and then click \mi{Estimates} we see the proportion of time the chain spent in a model state with rate heterogeneity on (1) versus off (0), and thus the posterior support for a model with rate heterogeneity. Here, the chain seems to remain in a state with rate heterogeneity on, indicating that we should probably include rate heterogeneity [Figure \ref{fig:hasGammaRates}].  We can also select \textbf{hasInvariableSites} to see if a model with invariant sites is supported. Here we see that the model spends more time in a model state with invariant sites off (0) than on (1), indicating that including invariant sites might not be so important [Figure \ref{fig:hasInvariableSites}]. Note that we can also look at the traces for \textbf{BMT\_gammaShape} and \textbf{BMT\_ProportionInvariant} to see what values of these two parameters the chain visited.
+
+There are a few other things we can look at in Tracer as well:
+\begin{itemize}
+\item \textbf{rateAC,...,rateGT} are the individual substitution rates the chain visited. \\ 
+\item \textbf{BMT\_Rates.1 to 6} are also the substitution rates, but indexed by how they are grouped into the six different possible rate categories [see Figure \ref{fig:modelIndexes}]. 
+\item \textbf{ActiveGammaShape/PropInvariable} are the gamma shape parameter and the proportion of variables sites when active, that is, when \textbf{hasGammaRates} and \textbf{hasInvariableSites} are selected. To get the estimate of the mean of the shape parameter, divide the mean ActiveGammaShape by the mean of hasGammaRates.\\
+\item \textbf{hasEqualFreqs} indicates if the chain is in a state with equal nucleotide base frequencies. 
+\end{itemize}
+
+\begin{figure}[!htbp]
+\centering
+\fbox{\includegraphics[scale=0.6]{figures/hasGammaRates}}
+\caption{\small The posterior support for including gamma rate heterogeneity.}
+\label{fig:hasGammaRates}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\fbox{\includegraphics[scale=0.6]{figures/hasInvariableSites}}
+\caption{\small The posterior support for including a proportion of invariant sites.}
+\label{fig:hasInvariableSites}
+\end{figure}
 
 
+\bigskip
+\subsection{Analyzing the output using BModelAnalyzer}
 
-% Add a section at the end with some useful links
+Another really nice feature of bModelTest is that we can graphically analyze the output using the \textbf{BModelAnalyser App}.
+
+\begin{framed}
+In BEAUti, select \mi{File\textrightarrow Launch Apps} and then launch the \textbf{BModelAnalyser App}.  A dialogue window should pop up [Figure \ref{fig:analyzerDialogue}]. Enter \textbf{primate-mtDNA-bMT.log} as the file to analyze. You can leave the other entries at their default settings but make sure \textbf{transitionTransversionSplit} is selected for the Model Set and the box next to \textbf{Use Browser For Visualization} is checked. Then click \mi{OK}.
+\end{framed}
+
+\begin{figure}[!htbp]
+\centering
+\fbox{\includegraphics[scale=0.6]{figures/analyzerDialogue}}
+\caption{\small Running the BModelAnalyser App.}
+\label{fig:analyzerDialogue}
+\end{figure}
+
+After BModelAnalyser runs, a new window should appear in your default web browser that represents the model selection results graphically [Figure \ref{fig:modelGraph}]. This graph depicts the nested relationship of the different substitution models: an arrow pointing from one model to another indicates that the model at the tail is nested within the model at the head of the arrow. As we can see, JC69 is nested within all other models and all other models are nested within GTR.
+
+\begin{figure}[!htbp]
+\centering
+\fbox{\includegraphics[scale=0.8]{figures/modelGraph}}
+\caption{\small A graphical representation of the model selection results produced by BModelAnalyzer.}
+\label{fig:modelGraph}
+\end{figure}
+
+The area of the circle surrounding each model is proportional to the the posterior support for that model. The colors represent whether the model is contained within the 95\% credible set (blue) or not (red). For the primate data set, the HKY model clearly has the highest posterior support [Figure \ref{fig:modelGraph}]. However, other models such as TN93 and two unnamed models, $121323$ and $121123$, also have fairly high posterior support. The six digit model code describes how the different substitution rates are grouped in the order of $r_{ac}$, $r_{ag}$, $r_{at}$, $r_{cg}$, $r_{ct}$ and $r_{gt}$. For instance, $121323$ is a slight variant of the HKY model with an additional group for the rates $r_{ct}$ and $r_{gt}$. The six digit codes for all models are shown in Figure \ref{fig:modelIndexes}.
+
+\begin{framed}
+\textbf{Topic for discussion:} We have used bModelTest to explore a large set of substitution models. But how do we know that any of the substitution models actually fit the observed sequence data well?
+\end{framed}
+
+
+%%%%%
 \bigskip
 \section{Useful Links}
 
 \begin{itemize}
-\item \href{http://www.beast2.org/book.html}{\textit{Bayesian Evolutionary Analysis with BEAST 2}}  \citep{BEAST2book2014}
-\item BEAST 2 website and documentation: \href{http://www.beast2.org/}{http://www.beast2.org/}
-\item BEAST 1 website and documentation: \href{http://beast.bio.ed.ac.uk}{http://beast.bio.ed.ac.uk} 
-\item Join the BEAST user discussion: \href{http://groups.google.com/group/beast-users}{http://groups.google.com/group/beast-users}
+\item The original bModelTest tutorial \href{https://github.com/BEAST2-Dev/bModelTest/tree/master/doc/tutorial}{https://github.com/BEAST2-Dev/bModelTest/tree/master/doc/tutorial} \\ \vspace{-7mm}
+%\item \href{http://www.beast2.org/book.html}{\textit{Bayesian Evolutionary Analysis with BEAST 2}}  \citep{BEAST2book2014}\\ \vspace{-7mm}
+%\item BEAST 2 website and documentation: \href{http://www.beast2.org/}{http://www.beast2.org/} \\ \vspace{-7mm}
+%\item BEAST 1 website and documentation: \href{http://beast.bio.ed.ac.uk}{http://beast.bio.ed.ac.uk} \\ \vspace{-7mm}
+%\item Join the BEAST user discussion: \href{http://groups.google.com/group/beast-users}{http://groups.google.com/group/beast-users} \\ \vspace{-7mm}
 \end{itemize}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%
