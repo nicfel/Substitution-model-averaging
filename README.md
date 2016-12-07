@@ -1,5 +1,5 @@
 ---
-author: Carsten Magnus,David A. Rasmussen,Remco Bouckaert
+author: David A. Rasmussen,Carsten Magnus,Remco Bouckaert
 beastversion: 2.x
 title: Substitution-model-selection
 level: Intermediate
