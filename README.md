@@ -61,7 +61,7 @@ Both BEAST2 and BEAUti2 are Java programs, which means that the exact same code 
 Tracer ([http://tree.bio.ed.ac.uk/software/tracer](http://tree.bio.ed.ac.uk/software/tracer)) is used to summarise the posterior estimates of the various parameters sampled by the Markov Chain. This program can be used for visual inspection and to assess convergence. It helps to quickly view median estimates and 95% highest posterior density intervals of the parameters, and calculates the effective sample sizes (ESS) of parameters. It can also be used to investigate potential parameter correlations. We will be using Tracer v{{ page.tracerversion }}.
 
 
-
+----
 
 # Practical: Selecting a substitution model
 
@@ -280,7 +280,7 @@ The area of the circle surrounding each model is proportional to the the posteri
 > **Topic for discussion:** We have used bModelTest to explore a large set of substitution models. But how do we know that any of the substitution models actually fit the observed sequence data well?
 > 
 
----
+----
 
 # Acknowledgment
 
