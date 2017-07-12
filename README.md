@@ -105,7 +105,7 @@ The Partition window should now look like [Figure 2](#fig:partitions).
 
 <figure>
 	<a id="fig:partitions"></a>
-	<img  src="figures/partitions.png" alt="">
+	<img style="width:80.0%;" src="figures/partitions.png" alt="">
 	<figcaption>Figure 2: Linking the Site Model across partitions in BEAUti.</figcaption>
 </figure>
 <br>
@@ -119,7 +119,7 @@ Now we want to set up our Site Model to run the model averaging analysis.
 
 <figure>
 	<a id="fig:siteModel"></a>
-	<img  src="figures/siteModel.png" alt="">
+	<img style="width:80.0%;" src="figures/siteModel.png" alt="">
 	<figcaption>Figure 3: Setting up the BEAST ModelTest.</figcaption>
 </figure>
 <br>
