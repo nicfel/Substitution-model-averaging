@@ -280,7 +280,7 @@ The area of the circle surrounding each model is proportional to the the posteri
 > **Topic for discussion:** We have used bModelTest to explore a large set of substitution models. But how do we know that any of the substitution models actually fit the observed sequence data well?
 > 
 
-
+---
 
 # Acknowledgment
 
