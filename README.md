@@ -38,7 +38,6 @@ Fortunately, nowadays we can be more sophisticated in our modeling choices and l
 This allows us to treat the substitution model as a nuisance parameter and integrate over all _available_ (more on this later) substitution models while simultaneously estimating the phylogeny and other model parameters. Thus, parameter estimates are effectively averaged over different substitution models, weighted by their support.
 A useful consequence is that as we are exploring the space of different substitution models we also log the proportion of time that the Markov chain spends in a particular model state. This can be interpreted as the posterior support of a model, which tells us how strongly the data and our prior beliefs support a model in comparison to other competing models.
 
-Note that **bModelTest** is only able to average over a subset of substitution models that are (a) implemented in BEAST2 and (b) that it knows how to move between. Ideally we would want to integrate over all possible substitution models, but since this is an intractable problem we restrict ourselves to ....
 
 
 ----
@@ -100,7 +99,7 @@ We will continue analyzing the primate mitochondrial data set from the introduct
 In this tutorial, we will simplify things by having all four partitions in the alignment evolve under the same Site, Clock and Tree models.  
 
 
-> In the **Partitions** panel select all four partitions (with **shift+click**) and then click **Link Site Models**, **Link Clock Models** and **Link Trees**. You should rename each model something more informative than noncoding, such as **site**, **clock** and **tree**. Rename models by double-clicking on the drop-down boxes.
+> In the **Partitions** panel select all four partitions (with **shift+click**) and then click **Link Site Models**, **Link Clock Models** and **Link Trees**. You should rename each model something more informative than noncoding, such as **site**, **clock** and **tree**. Rename models by **double-clicking** on the drop-down boxes.
 > 
 
 The Partition window should now look like [Figure 2](#fig:partitions).
@@ -139,7 +138,7 @@ In the **Clock Model** and **Prior** tabs, we do not need to change any of the d
 ## Run the analysis in BEAST
 
 
-> Open BEAST and choose `primate-mtDNA-bMT.xml` as the BEAST XML File ([Figure 4](#fig:beastRun)). Then click **run**.
+> Open BEAST and choose `primate-mtDNA-bMT.xml` as the BEAST XML File ([Figure 4](#fig:beastRun)). If BEAGLE is installed check the box to use it. Then click **run**.
 > 
 
 <figure>
@@ -153,7 +152,7 @@ While BEAST is running consider the following discussion points.
 
 We did not check **estimate** in the box next to the Mutation Rate in the **Site Model** tab. Doing so makes no difference, since BEAUti constrains the mean mutation rate of all partitions to be equal to 1 (by default). Since we linked the substitution model across all partitions we effectively have only one partition, thus the mutation rate is fixed to 1. 
 
-Note that BEAUti does not allow us to estimate the clock rate in the **Clock Model** tab. In this analysis we only have contemporaneously sampled sequences and we did not set a calibration node as in the introductory tutorial. Thus, we have no temporal information and the clock rate is not uniquely identifiable. To make the model identifiable BEAUti arbitrarily fixes the clock rate to 1.
+Note that BEAUti (by default) does not allow us to estimate the clock rate in the **Clock Model** tab. In this analysis we only have contemporaneously sampled sequences and we did not set a calibration node as in the introductory tutorial. Thus, we have no temporal information and the clock rate is not uniquely identifiable. To make the model identifiable BEAUti arbitrarily fixes the clock rate to 1.
 
 > **Topics for discussion:** 
 >
@@ -199,6 +198,8 @@ Now click on the **Estimates** tab above. This frequency histogram shows us how 
 </figure>
 <br>
 
+> **Topic for discussion:** Did the chain ever visit the JC69 model? Why not?
+> 
 
 We can also use the output of our analysis to see if a model with (gamma) rate heterogeneity and/or a proportion of invariant sites is supported. If we select **hasGammaRates** in the window on the left and then click **Estimates** we see the proportion of time the chain spent in a model state with rate heterogeneity on (1) versus off (0), and thus the posterior support for a model with rate heterogeneity. Here, the chain seems to remain in a state with rate heterogeneity on, indicating very strong support for heterogeneity ([Figure 8](#fig:hasGammaRates)).  We can also select **hasInvariableSites** to see if a model with invariant sites is supported. Here we see that the model spends more time in a model state with invariant sites off (0) than on (1), indicating that the presence of invariant sites are not as strongly supported important ([Figure 9](#fig:hasInvariableSites)). Note that we can also look at the traces for **BMT_gammaShape** and **BMT_ProportionInvariant** to see which values of these two parameters the chain visited.
 
@@ -225,7 +226,27 @@ There are a few other things we can look at in Tracer as well:
 </figure>
 <br>
 
+> **Topic for discussion:** Why does **BMT_Rates.6** not mix poorly? 
+>
+> **Hint:** Look at the table of substitution models and the distribution and trace of **BMT_ModelIndicator** in Tracer. 
+>
+> **Bonus hint:** Look at the trace for **BMT_Rates.6** and plot the joint-marginal between **BMT_Rates.1** and **BMT_Rates.2**.
+>
 
+
+Select pairs of the **rateAC, ... ,rateGT** parameters (using **shift+click**) and click on the **Joint-Marginal** tab to investigate parameter correlations ([Figure 10](#fig:rateCorrelations)). Try looking at **rateAT** vs. **rateCG** and **rateCG** vs **rateGT**). 
+
+<figure>
+	<a id="fig:rateCorrelations"></a>
+	<img style="width:80.0%;" src="figures/rateCorrelations.png" alt="">
+	<figcaption>Figure 10: Correlations between rate parameters.</figcaption>
+</figure>
+<br>
+
+> **Topic for discussion:** It appears that some pairs of the rate parameters are highly correlated for some samples and uncorrelated for the rest. What is happening here? Should we be worried about these parameter correlations? 
+>
+> Do you also see correlations between the **BMT_Rates.1 to 6** parameters?
+>
 
 
 ## Analyzing the output using BModelAnalyzer
@@ -233,28 +254,28 @@ There are a few other things we can look at in Tracer as well:
 Another really nice feature of bModelTest is that we can graphically analyze the output using the **BModelAnalyser App**.
 
 
-> In BEAUti, select **File > Launch Apps** and then launch the **BModelAnalyser App**.  A dialogue window should pop up ([Figure 10](#fig:analyzerDialogue)). Enter `primate-mtDNA-bMT.log` as the file to analyze. You can leave the other entries at their default settings but make sure **transitionTransversionSplit** is selected for the Model Set and the box next to **Use Browser For Visualization** is checked. Then click **OK**.
+> In BEAUti, select **File > Launch Apps** and then launch the **BModelAnalyser App**.  A dialogue window should pop up ([Figure 11](#fig:analyzerDialogue)). Enter `primate-mtDNA-bMT.log` as the file to analyze. You can leave the other entries at their default settings but make sure **transitionTransversionSplit** is selected for the Model Set and the box next to **Use Browser For Visualization** is checked. Then click **OK**.
 > 
 
 <figure>
 	<a id="fig:analyzerDialogue"></a>
 	<img style="width:60.0%;" src="figures/analyzerDialogue.png" alt="">
-	<figcaption>Figure 10: Running the BModelAnalyser App.</figcaption>
+	<figcaption>Figure 11: Running the BModelAnalyser App.</figcaption>
 </figure>
 <br>
 
 
-After BModelAnalyser runs, a new window should appear in your default web browser that represents the model selection results graphically ([Figure 11](#fig:modelGraph)). This graph depicts the nested relationship of the different substitution models: an arrow pointing from one model to another indicates that the model at the tail is nested within the model at the head of the arrow. As we can see, JC69 is nested within all other models and all other models are nested within GTR.
+After BModelAnalyser runs, a new window should appear in your default web browser that represents the model selection results graphically ([Figure 12](#fig:modelGraph)). This graph depicts the nested relationship of the different substitution models: an arrow pointing from one model to another indicates that the model at the tail is nested within the model at the head of the arrow. As we can see, JC69 is nested within all other models and all other models are nested within GTR.
 
 <figure>
 	<a id="fig:modelGraph"></a>
 	<img src="figures/modelGraph.png" alt="">
-	<figcaption>Figure 11: A graphical representation of the model selection results produced by BModelAnalyzer.</figcaption>
+	<figcaption>Figure 12: A graphical representation of the model selection results produced by BModelAnalyzer.</figcaption>
 </figure>
 <br>
 
 
-The area of the circle surrounding each model is proportional to the the posterior support for that model. The colours represent whether the model is contained within the 95% credible set (blue) or not (red). For the primate data set, the HKY model clearly has the highest posterior support ([Figure 11](#fig:modelGraph)). However, other models such as TN93 and two unnamed models, **121323** and **121123**, also have fairly high posterior support. The six digit model code describes how the different substitution rates are grouped in the order of {% eqinline r_{ac} %}, {% eqinline r_{ag} %}, {% eqinline r_{at} %}, {% eqinline r_{cg} %}, {% eqinline r_{ct} %} and {% eqinline r_{gt} %}. For instance, **121323** is a slight variant of the HKY model with an additional group for the rates {% eqinline r_{ct} %} and {% eqinline r_{gt} %}. The six digit codes for all models are shown in [Figure 6](#fig:modelIndexes).
+The area of the circle surrounding each model is proportional to the the posterior support for that model. The colours represent whether the model is contained within the 95% credible set (blue) or not (red). For the primate data set, the HKY model clearly has the highest posterior support ([Figure 12](#fig:modelGraph)). However, other models such as TN93 and two unnamed models, **121323** and **121123**, also have fairly high posterior support. The six digit model code describes how the different substitution rates are grouped in the order of {% eqinline r_{ac} %}, {% eqinline r_{ag} %}, {% eqinline r_{at} %}, {% eqinline r_{cg} %}, {% eqinline r_{ct} %} and {% eqinline r_{gt} %}. For instance, **121323** is a slight variant of the HKY model with an additional group for the rates {% eqinline r_{ct} %} and {% eqinline r_{gt} %}. The six digit codes for all models are shown in [Figure 6](#fig:modelIndexes).
 
 
 > **Topic for discussion:** We have used bModelTest to explore a large set of substitution models. But how do we know that any of the substitution models actually fit the observed sequence data well?
