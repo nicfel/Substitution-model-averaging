@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" version="2.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" required="bModelTest v1.0.4:BEASTLabs v1.7.0" version="2.4">
 
 
     <data
@@ -37,7 +37,7 @@ id="primate-mtDNA">
 <map name="OneOnX" >beast.math.distributions.OneOnX</map>
 
 
-<run id="mcmc" spec="MCMC" chainLength="1000000">
+<run id="mcmc" spec="MCMC" chainLength="5000000">
     <state id="state" storeEvery="5000">
         <tree id="Tree.t:tree" name="stateNode">
             <taxonset id="TaxonSet.noncoding" spec="TaxonSet">
@@ -46,24 +46,21 @@ id="primate-mtDNA">
                 </alignment>
             </taxonset>
         </tree>
-        <parameter id="gammaShape.s:noncoding" name="stateNode">1.0</parameter>
-        <parameter id="kappa.s:noncoding" lower="0.0" name="stateNode">2.0</parameter>
-        <parameter id="mutationRate.s:noncoding" name="stateNode">1.0</parameter>
-        <parameter id="gammaShape.s:1stpos" name="stateNode">1.0</parameter>
-        <parameter id="kappa.s:1stpos" lower="0.0" name="stateNode">2.0</parameter>
-        <parameter id="mutationRate.s:1stpos" name="stateNode">1.0</parameter>
-        <parameter id="gammaShape.s:2ndpos" name="stateNode">1.0</parameter>
-        <parameter id="kappa.s:2ndpos" lower="0.0" name="stateNode">2.0</parameter>
-        <parameter id="mutationRate.s:2ndpos" name="stateNode">1.0</parameter>
-        <parameter id="gammaShape.s:3rdpos" name="stateNode">1.0</parameter>
-        <parameter id="kappa.s:3rdpos" lower="0.0" name="stateNode">2.0</parameter>
-        <parameter id="mutationRate.s:3rdpos" name="stateNode">1.0</parameter>
         <parameter id="birthRate.t:tree" name="stateNode">1.0</parameter>
+        <stateNode id="BMT_ModelIndicator.s:site" spec="parameter.IntegerParameter" lower="0" upper="5">5</stateNode>
+        <parameter id="BMT_Rates.s:site" dimension="6" lower="0.01" name="stateNode" upper="100.0">1.0</parameter>
+        <parameter id="BMT_gammaShape.s:site" name="stateNode">1.0</parameter>
+        <parameter id="BMT_ProportionInvariable.s:site" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
+        <stateNode id="hasInvariableSites.s:site" spec="parameter.IntegerParameter">1</stateNode>
+        <stateNode id="hasGammaRates.s:site" spec="parameter.IntegerParameter">1</stateNode>
+        <stateNode id="hasEqualFreqs.s:site" spec="parameter.BooleanParameter">false</stateNode>
+        <parameter id="BMT_frequencies.s:site" dimension="4" name="stateNode">0.25 0.25 0.25 0.25</parameter>
     </state>
 
-    <init id="RandomTree.t:tree" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree.t:tree" taxa="@noncoding">
-        <populationModel id="ConstantPopulation0.t:tree" spec="ConstantPopulation">
-            <parameter id="randomPopSize.t:tree" name="popSize">1.0</parameter>
+    <init id="RandomTree.t:1stpos" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree.t:tree">
+        <taxa id="1stpos" spec="FilteredAlignment" data="@primate-mtDNA" filter="2-457\3,660-896\3"/>
+        <populationModel id="ConstantPopulation0.t:1stpos" spec="ConstantPopulation">
+            <parameter id="randomPopSize.t:1stpos" name="popSize">1.0</parameter>
         </populationModel>
     </init>
 
@@ -71,103 +68,57 @@ id="primate-mtDNA">
         <distribution id="prior" spec="util.CompoundDistribution">
             <distribution id="YuleModel.t:tree" spec="beast.evolution.speciation.YuleModel" birthDiffRate="@birthRate.t:tree" tree="@Tree.t:tree"/>
             <prior id="YuleBirthRatePrior.t:tree" name="distribution" x="@birthRate.t:tree">
-                <Uniform id="Uniform.0" name="distr" upper="Infinity"/>
+                <Uniform id="Uniform.1" name="distr" upper="Infinity"/>
             </prior>
-            <prior id="GammaShapePrior.s:1stpos" name="distribution" x="@gammaShape.s:1stpos">
+            <distribution id="BMT_RatesPrior.s:site" spec="beast.math.distributions.NucleotideRevJumpSubstModelRatePrior" modelIndicator="@BMT_ModelIndicator.s:site" x="@BMT_Rates.s:site">
+                <substModel id="RevJump.s:site" spec="NucleotideRevJumpSubstModel" modelIndicator="@BMT_ModelIndicator.s:site" rates="@BMT_Rates.s:site">
+                    <frequencies id="BMTfreqs.s:site" spec="ModelFrequencies" empirical="false" frequencies="@BMT_frequencies.s:site" hasEqualFreqs="@hasEqualFreqs.s:site"/>
+                </substModel>
+                <Exponential id="BMT_RatesPrior.s:sitex" name="distr"/>
+            </distribution>
+            <distribution id="BMT_GammaShapePrior.s:site" spec="beast.math.distributions.BMTPrior" count="@hasGammaRates.s:site" x="@BMT_gammaShape.s:site">
                 <Exponential id="Exponential.0" name="distr">
-                    <parameter id="RealParameter.0" lower="0.0" name="mean" upper="0.0">1.0</parameter>
+                    <parameter id="RealParameter.0" estimate="false" name="mean">1.0</parameter>
                 </Exponential>
+            </distribution>
+            <distribution id="BMT_PropInvariablePrior.s:site" spec="beast.math.distributions.BMTPrior" count="@hasInvariableSites.s:site" x="@BMT_ProportionInvariable.s:site">
+                <Beta id="Beta.0" name="distr">
+                    <parameter id="RealParameter.4" lower="0.0" name="alpha" upper="0.0">1.0</parameter>
+                    <parameter id="RealParameter.5" lower="0.0" name="beta" upper="0.0">4.0</parameter>
+                </Beta>
+            </distribution>
+            <prior id="BMT_freqsPrior.s:site" name="distribution" x="@BMT_frequencies.s:site">
+                <distr id="Dirichlet.0" spec="beast.math.distributions.Dirichlet">
+                    <parameter id="RealParameter.6" dimension="4" lower="0.0" name="alpha" upper="0.0">1.0 1.0 1.0 1.0</parameter>
+                </distr>
             </prior>
-            <prior id="GammaShapePrior.s:2ndpos" distr="@Exponential.0" name="distribution" x="@gammaShape.s:2ndpos"/>
-            <prior id="GammaShapePrior.s:3rdpos" distr="@Exponential.0" name="distribution" x="@gammaShape.s:3rdpos"/>
-            <prior id="GammaShapePrior.s:noncoding" distr="@Exponential.0" name="distribution" x="@gammaShape.s:noncoding"/>
-            <prior id="KappaPrior.s:1stpos" name="distribution" x="@kappa.s:1stpos">
-                <LogNormal id="LogNormalDistributionModel.0" name="distr">
-                    <parameter id="RealParameter.01" estimate="false" name="M">1.0</parameter>
-                    <parameter id="RealParameter.02" estimate="false" name="S">1.25</parameter>
-                </LogNormal>
-            </prior>
-            <prior id="KappaPrior.s:2ndpos" distr="@LogNormalDistributionModel.0" name="distribution" x="@kappa.s:2ndpos"/>
-            <prior id="KappaPrior.s:3rdpos" distr="@LogNormalDistributionModel.0" name="distribution" x="@kappa.s:3rdpos"/>
-            <prior id="KappaPrior.s:noncoding" distr="@LogNormalDistributionModel.0" name="distribution" x="@kappa.s:noncoding"/>
         </distribution>
         <distribution id="likelihood" spec="util.CompoundDistribution" useThreads="true">
             <distribution id="treeLikelihood.noncoding" spec="ThreadedTreeLikelihood" data="@noncoding" tree="@Tree.t:tree">
-                <siteModel id="SiteModel.s:noncoding" spec="SiteModel" gammaCategoryCount="4" mutationRate="@mutationRate.s:noncoding" shape="@gammaShape.s:noncoding">
-                    <parameter id="proportionInvariant.s:noncoding" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                    <substModel id="hky.s:noncoding" spec="HKY" kappa="@kappa.s:noncoding">
-                        <frequencies id="empiricalFreqs.s:noncoding" spec="Frequencies" data="@noncoding"/>
-                    </substModel>
+                <siteModel id="BEASTModelTest.s:site" spec="BEASTModelTestSiteModel" gammaCategoryCount="4" hasGammaRates="@hasGammaRates.s:site" hasInvariantSites="@hasInvariableSites.s:site" proportionInvariant="@BMT_ProportionInvariable.s:site" shape="@BMT_gammaShape.s:site" substModel="@RevJump.s:site">
+                    <parameter id="BMT_mutationRate.s:site" estimate="false" name="mutationRate">1.0</parameter>
                 </siteModel>
                 <branchRateModel id="StrictClock.c:clock" spec="beast.evolution.branchratemodel.StrictClockModel">
                     <parameter id="clockRate.c:clock" estimate="false" name="clock.rate">1.0</parameter>
                 </branchRateModel>
             </distribution>
-            <distribution id="treeLikelihood.1stpos" spec="ThreadedTreeLikelihood" branchRateModel="@StrictClock.c:clock" tree="@Tree.t:tree">
-                <data
-id="1stpos"
-spec="FilteredAlignment"
-data="@primate-mtDNA"
-filter="2-457\3,660-896\3"/>
-                <siteModel id="SiteModel.s:1stpos" spec="SiteModel" gammaCategoryCount="4" mutationRate="@mutationRate.s:1stpos" shape="@gammaShape.s:1stpos">
-                    <parameter id="proportionInvariant.s:1stpos" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                    <substModel id="hky.s:1stpos" spec="HKY" kappa="@kappa.s:1stpos">
-                        <frequencies id="empiricalFreqs.s:1stpos" spec="Frequencies" data="@1stpos"/>
-                    </substModel>
-                </siteModel>
-            </distribution>
-            <distribution id="treeLikelihood.2ndpos" spec="ThreadedTreeLikelihood" branchRateModel="@StrictClock.c:clock" tree="@Tree.t:tree">
+            <distribution id="treeLikelihood.1stpos" spec="ThreadedTreeLikelihood" branchRateModel="@StrictClock.c:clock" data="@1stpos" siteModel="@BEASTModelTest.s:site" tree="@Tree.t:tree"/>
+            <distribution id="treeLikelihood.2ndpos" spec="ThreadedTreeLikelihood" branchRateModel="@StrictClock.c:clock" siteModel="@BEASTModelTest.s:site" tree="@Tree.t:tree">
                 <data
 id="2ndpos"
 spec="FilteredAlignment"
 data="@primate-mtDNA"
 filter="3-457\3,661-896\3"/>
-                <siteModel id="SiteModel.s:2ndpos" spec="SiteModel" gammaCategoryCount="4" mutationRate="@mutationRate.s:2ndpos" shape="@gammaShape.s:2ndpos">
-                    <parameter id="proportionInvariant.s:2ndpos" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                    <substModel id="hky.s:2ndpos" spec="HKY" kappa="@kappa.s:2ndpos">
-                        <frequencies id="empiricalFreqs.s:2ndpos" spec="Frequencies" data="@2ndpos"/>
-                    </substModel>
-                </siteModel>
             </distribution>
-            <distribution id="treeLikelihood.3rdpos" spec="ThreadedTreeLikelihood" branchRateModel="@StrictClock.c:clock" tree="@Tree.t:tree">
+            <distribution id="treeLikelihood.3rdpos" spec="ThreadedTreeLikelihood" branchRateModel="@StrictClock.c:clock" siteModel="@BEASTModelTest.s:site" tree="@Tree.t:tree">
                 <data
 id="3rdpos"
 spec="FilteredAlignment"
 data="@primate-mtDNA"
 filter="4-457\3,662-.\3"/>
-                <siteModel id="SiteModel.s:3rdpos" spec="SiteModel" gammaCategoryCount="4" mutationRate="@mutationRate.s:3rdpos" shape="@gammaShape.s:3rdpos">
-                    <parameter id="proportionInvariant.s:3rdpos" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                    <substModel id="hky.s:3rdpos" spec="HKY" kappa="@kappa.s:3rdpos">
-                        <frequencies id="empiricalFreqs.s:3rdpos" spec="Frequencies" data="@3rdpos"/>
-                    </substModel>
-                </siteModel>
             </distribution>
         </distribution>
     </distribution>
-
-    <operator id="gammaShapeScaler.s:noncoding" spec="ScaleOperator" parameter="@gammaShape.s:noncoding" scaleFactor="0.5" weight="0.1"/>
-
-    <operator id="KappaScaler.s:noncoding" spec="ScaleOperator" parameter="@kappa.s:noncoding" scaleFactor="0.5" weight="0.1"/>
-
-    <operator id="FixMeanMutationRatesOperator" spec="DeltaExchangeOperator" delta="0.75" weight="2.0">
-        <parameter idref="mutationRate.s:noncoding"/>
-        <parameter idref="mutationRate.s:1stpos"/>
-        <parameter idref="mutationRate.s:2ndpos"/>
-        <parameter idref="mutationRate.s:3rdpos"/>
-        <weightvector id="weightparameter" spec="parameter.IntegerParameter" dimension="4" estimate="false" lower="0" upper="0">205 231 231 231</weightvector>
-    </operator>
-
-    <operator id="gammaShapeScaler.s:1stpos" spec="ScaleOperator" parameter="@gammaShape.s:1stpos" scaleFactor="0.5" weight="0.1"/>
-
-    <operator id="KappaScaler.s:1stpos" spec="ScaleOperator" parameter="@kappa.s:1stpos" scaleFactor="0.5" weight="0.1"/>
-
-    <operator id="gammaShapeScaler.s:2ndpos" spec="ScaleOperator" parameter="@gammaShape.s:2ndpos" scaleFactor="0.5" weight="0.1"/>
-
-    <operator id="KappaScaler.s:2ndpos" spec="ScaleOperator" parameter="@kappa.s:2ndpos" scaleFactor="0.5" weight="0.1"/>
-
-    <operator id="gammaShapeScaler.s:3rdpos" spec="ScaleOperator" parameter="@gammaShape.s:3rdpos" scaleFactor="0.5" weight="0.1"/>
-
-    <operator id="KappaScaler.s:3rdpos" spec="ScaleOperator" parameter="@kappa.s:3rdpos" scaleFactor="0.5" weight="0.1"/>
 
     <operator id="YuleBirthRateScaler.t:tree" spec="ScaleOperator" parameter="@birthRate.t:tree" scaleFactor="0.75" weight="3.0"/>
 
@@ -185,39 +136,62 @@ filter="4-457\3,662-.\3"/>
 
     <operator id="YuleModelWilsonBalding.t:tree" spec="WilsonBalding" tree="@Tree.t:tree" weight="3.0"/>
 
-    <logger id="tracelog" fileName="primate-mtDNA.log" logEvery="200" model="@posterior" sanitiseHeaders="true" sort="smart">
+    <operator id="BMT_ModelTestOperator.s:site" spec="BMTMergeSplitOperator" modelIndicator="@BMT_ModelIndicator.s:site" rates="@BMT_Rates.s:site" substModel="@RevJump.s:site" weight="1.0"/>
+
+    <operator id="BMT_Ratescaler.s:site" spec="BMTExchangeOperator" delta="0.15" modelIndicator="@BMT_ModelIndicator.s:site" rates="@BMT_Rates.s:site" substModel="@RevJump.s:site" weight="1.0"/>
+
+    <operator id="BMT_gammaShapeScaler.s:site" spec="BMTScaleOperator" count="@hasGammaRates.s:site" parameter="@BMT_gammaShape.s:site" scaleFactor="0.5" weight="0.5"/>
+
+    <operator id="BMT_ProportionInvariableScaler.s:site" spec="BMTScaleOperator" count="@hasInvariableSites.s:site" parameter="@BMT_ProportionInvariable.s:site" scaleFactor="0.5" weight="0.5"/>
+
+    <operator id="BMT_hasGammaRatesFlipper.s:site" spec="BMTBirthDeathOperator" count="@hasGammaRates.s:site" rates="@BMT_gammaShape.s:site" weight="0.1"/>
+
+    <operator id="BMT_hasInvariableSitesFlipper.s:site" spec="BMTBirthDeathOperator" count="@hasInvariableSites.s:site" rates="@BMT_ProportionInvariable.s:site" weight="0.1"/>
+
+    <operator id="BMT_FreqsFlipOperator.s:site" spec="BitFlipOperator" parameter="@hasEqualFreqs.s:site" weight="0.1"/>
+
+    <operator id="BMT_FrequenciesExchanger.s:site" spec="DeltaExchangeOperator" delta="0.01" weight="0.1">
+        <parameter idref="BMT_frequencies.s:site"/>
+    </operator>
+
+    <logger id="tracelog" fileName="primate-mtDNA-bMT.log" logEvery="5000" model="@posterior" sanitiseHeaders="true" sort="smart">
         <log idref="posterior"/>
         <log idref="likelihood"/>
         <log idref="prior"/>
-        <log idref="treeLikelihood.2ndpos"/>
-        <log idref="treeLikelihood.3rdpos"/>
         <log idref="treeLikelihood.1stpos"/>
+        <log idref="treeLikelihood.3rdpos"/>
         <log idref="treeLikelihood.noncoding"/>
         <log id="TreeHeight.t:tree" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:tree"/>
-        <log idref="gammaShape.s:noncoding"/>
-        <log idref="kappa.s:noncoding"/>
-        <log idref="mutationRate.s:noncoding"/>
-        <log idref="gammaShape.s:1stpos"/>
-        <log idref="kappa.s:1stpos"/>
-        <log idref="mutationRate.s:1stpos"/>
-        <log idref="gammaShape.s:2ndpos"/>
-        <log idref="kappa.s:2ndpos"/>
-        <log idref="mutationRate.s:2ndpos"/>
-        <log idref="gammaShape.s:3rdpos"/>
-        <log idref="kappa.s:3rdpos"/>
-        <log idref="mutationRate.s:3rdpos"/>
         <log idref="YuleModel.t:tree"/>
         <log idref="birthRate.t:tree"/>
+        <log idref="treeLikelihood.2ndpos"/>
+        <log idref="RevJump.s:site"/>
+        <log idref="BMT_ModelIndicator.s:site"/>
+        <log idref="BMT_Rates.s:site"/>
+        <log idref="BMT_gammaShape.s:site"/>
+        <log idref="BMT_ProportionInvariable.s:site"/>
+        <log idref="hasGammaRates.s:site"/>
+        <log idref="hasInvariableSites.s:site"/>
+        <log id="ActivePropInvariable.s:site" spec="beast.util.Script" argnames="BMT_ProportionInvariable hasInvariableSites" expression="BMT_ProportionInvariable * hasInvariableSites">
+            <x idref="BMT_ProportionInvariable.s:site"/>
+            <x idref="hasInvariableSites.s:site"/>
+        </log>
+        <log id="ActiveGammaShape.s:site" spec="beast.util.Script" argnames="BMT_gammaShape hasGammaRates" expression="BMT_gammaShape * hasGammaRates">
+            <x idref="BMT_gammaShape.s:site"/>
+            <x idref="hasGammaRates.s:site"/>
+        </log>
+        <log idref="hasEqualFreqs.s:site"/>
+        <log idref="BMT_frequencies.s:site"/>
     </logger>
 
-    <logger id="screenlog" logEvery="1000">
+    <logger id="screenlog" logEvery="5000">
         <log idref="posterior"/>
         <log id="ESS.0" spec="util.ESS" arg="@posterior"/>
         <log idref="likelihood"/>
         <log idref="prior"/>
     </logger>
 
-    <logger id="treelog.t:tree" fileName="primate-mtDNA.trees" logEvery="1000" mode="tree">
+    <logger id="treelog.t:tree" fileName="primate-mtDNA-bMT.trees" logEvery="5000" mode="tree">
         <log id="TreeWithMetaDataLogger.t:tree" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree.t:tree"/>
     </logger>
 
