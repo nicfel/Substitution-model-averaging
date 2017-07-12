@@ -1,7 +1,7 @@
 ---
 author: David A. Rasmussen,Carsten Magnus,Remco Bouckaert
 beastversion: 2.x
-title: Substitution-model-selection
+title: Substitution-model-averaging
 level: Intermediate
 beastversion: 2.4.7
 tracerversion: 1.6.0
@@ -22,11 +22,10 @@ Before running any phylogenetic analysis in BEAST, we need to decide on a model 
 		r_{ag} & r_{cg} & - & r_{gt} \\
 		r_{at} & r_{ct} & r_{gt} & - \\
 	\end{pmatrix}
-	
 
 %}
 
-The different named substitution models (e.g. JC69, HKY, TN93 and GTR) group these rates into different categories. For example, the JC69 model groups all rates together into a single rate category whereas the GTR model assigns each rate to a different category. We are therefore faced with the difficult choice of deciding *a priori* which one of these substitution models is most appropriate for our data.
+The different named substitution models (e.g. JC69, HKY, TN93 and GTR) group these rates into different categories. For example, the JC69 model groups all rates together into a single rate category and assumes equal equilibrium frequencies whereas the GTR model assigns each rate to a different category and assumes a different equilibrium frequency for each nucleotide. We are therefore faced with the difficult choice of deciding *a priori* which one of these substitution models is most appropriate for our data.
 
 
 > **Topic for discussion:** In terms of phylogenetic inference, what would the consequences be of picking a substitution model that is overparameterized (too complex) for a given data set? What would the consequences be of picking a model that is underparameterized? 
@@ -34,11 +33,11 @@ The different named substitution models (e.g. JC69, HKY, TN93 and GTR) group the
 
 In addition to the substitution model, we also need to decide whether to include rate heterogeneity across sites. We might also want to include a proportion of invariant sites. On top of all this, we need to decide whether to estimate nucleotide base frequencies or fix them at their empirical frequencies. All of these choices leads to a bewildering number of different models to choose from. For this reason, researchers have often based their model choice on common conventions rather than on which model is most appropriate for their data.   
 
-Fortunately, nowadays we can be more sophisticated in our modeling choices and let the data inform us about which model is most appropriate using Bayesian model selection. In this tutorial, we will use BEAST2's model selection tool **bModelTest** {% cite Bouckaert2017 --file Substitution-model-selection/refs %} to select the most appropriate substitution model for the primate mitochondrial data set we already saw in the introductory tutorial. **bModelTest** uses reversible jump MCMC (rjMCMC), which allows the Markov chain to jump between states representing different possible substitution models, much like we jump between different parameter states in standard Bayesian MCMC inference. 
-This allows us to treat the substitution model as a nuisance parameter and integrate over all _available_ (more on this later) substitution models while simultaneously estimating the phylogeny and other model parameters. Thus, parameter estimates are effectively averaged over different substitution models, weighted by their support.
+Fortunately, nowadays we can be more sophisticated in our modeling choices and let the data inform us about which model is most appropriate using Bayesian model averaging. In this tutorial, we will use BEAST2's model averaging tool **bModelTest** {% cite Bouckaert2017 --file Substitution-model-selection/refs %} to select the most appropriate substitution model for the primate mitochondrial data set we already saw in the introductory tutorial. **bModelTest** uses reversible jump MCMC (rjMCMC), which allows the Markov chain to jump between states representing different possible substitution models, much like we jump between different parameter states in standard Bayesian MCMC inference. 
+This allows us to treat the substitution model as a nuisance parameter and integrate over all _available_ (more on this later) substitution models while simultaneously estimating the phylogeny and other model parameters. Thus, parameter estimates are effectively averaged over different substitution models, weighted by the support of each model.
 A useful consequence is that as we are exploring the space of different substitution models we also log the proportion of time that the Markov chain spends in a particular model state. This can be interpreted as the posterior support of a model, which tells us how strongly the data and our prior beliefs support a model in comparison to other competing models.
 
-
+Note that **bModelTest** is only able to average over a subset of substitution models that are (a) implemented in BEAST2 and (b) that it knows how to move between. Ideally we would want to integrate over all possible substitution models, but since non-reversible models are mathematically inconvenient we restrict ourselves to the set of time-reversible (symmetric) nucleotide substitution models, which leaves us with 203 possible models. In addition, we can jump between models with empirical/estimated base frequencies, with/without gamma distributed rate heterogeneity and with/without invariant sites, resulting in a total of 203 x 2 x 2 x 2 = 1,624 possible model combinations. 
 
 ----
 
@@ -112,7 +111,7 @@ The Partition window should now look like [Figure 2](#fig:partitions).
 <br>
 
 
-Now we want to set up our Site Model to run the model selection analysis.
+Now we want to set up our Site Model to run the model averaging analysis.
 
 
 > Click the **Site Model** tab in BEAUti and then select the drop-down box at the top which says **Gamma Site Model** and change it to **BEAST ModelTest** ([Figure 3](#fig:siteModel)). 
@@ -269,7 +268,7 @@ After BModelAnalyser runs, a new window should appear in your default web browse
 
 <figure>
 	<a id="fig:modelGraph"></a>
-	<img src="figures/modelGraph.png" alt="">
+	<img src="figures/modelGraph2.png" alt="">
 	<figcaption>Figure 12: A graphical representation of the model selection results produced by BModelAnalyzer.</figcaption>
 </figure>
 <br>
