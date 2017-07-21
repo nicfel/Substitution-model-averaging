@@ -130,7 +130,7 @@ In the lower drop-down box we will keep **transitionTransversionSplit** selected
 In the **Clock Model** and **Prior** tabs, we do not need to change any of the default settings for this tutorial.
 
 
-> Click the **MCMC** tab in BEAUti. Change the chain length to 5,000,000 and the sampling frequency to every 5,000. Change the **tracelog** and **treelog** file names to `primate-mtDNA-bMT` and then click **File > Save As** and save as `primate-mtDNA-bMT.xml`.
+> Click the **MCMC** tab in BEAUti. Change the chain length to 5,000,000 and the sampling frequency to every 5,000 by changing **Log Every** under **tracelog** and **treelog**. This will help us to avoid autocorrelation by ensuring that we are not sampling too frequently. (You can also increase **Log Every** under **screenlog** to keep BEAST2 from producing too much screen output). Change the **tracelog** and **treelog** file names to `primate-mtDNA-bMT` and click **File > Save As** and save as `primate-mtDNA-bMT.xml`.
 > 
 
 
@@ -155,7 +155,7 @@ Note that BEAUti (by default) does not allow us to estimate the clock rate in th
 
 > **Topics for discussion:** 
 >
-> - We cannot estimate the substitution rate, so branches in the tree will not be measured in units of time. What will be the units for branch lengths in the estimated tree?
+> - We cannot estimate the substitution rate, so branches in the tree will not be measured in calendar time. What will be the units for branch lengths in the estimated tree?
 > 
 > - Suppose we used individual substitution models for each partition. What does the estimated mutation rate for each partition represent? Would the rate of each partition be identifiable?
 >
