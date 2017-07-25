@@ -225,7 +225,7 @@ There are a few other things we can look at in Tracer as well:
 </figure>
 <br>
 
-> **Topic for discussion:** Why does **BMT_Rates.6** not mix poorly? 
+> **Topic for discussion:** Why does **BMT_Rates.6** mix poorly? 
 >
 > **Hint:** Look at the table of substitution models and the distribution and trace of **BMT_ModelIndicator** in Tracer. 
 >
