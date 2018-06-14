@@ -5,7 +5,7 @@ title: Substitution-model-averaging
 level: Intermediate
 beastversion: 2.5.0
 tracerversion: 1.7.0
-bmodeltestversion: 1.0.4 
+bmodeltestversion: 1.1.0
 ---
 
 
@@ -59,7 +59,7 @@ The different named substitution models (e.g. JC69, HKY, TN93 and GTR) group the
 > **Topic for discussion:** In terms of phylogenetic inference, what would the consequences be of picking a substitution model that is overparameterized (too complex) for a given data set? What would the consequences be of picking a model that is underparameterized? 
 > 
 
-In addition to the substitution model, we also need to decide whether to include rate heterogeneity across sites. We might also want to include a proportion of invariant sites. On top of all this, we need to decide whether to estimate nucleotide base frequencies or fix them at their empirical frequencies. All of these choices leads to a bewildering number of different models to choose from. For this reason, researchers have often based their model choice on common conventions rather than on which model is most appropriate for their data.   
+In addition to the substitution model, we also need to decide whether to include rate heterogeneity across sites. We might also want to include a proportion of invariant sites. On top of all this, we need to decide whether to estimate nucleotide base frequencies (the {% eqinline \pi_{X} %} in the equation above) or fix them at their empirical frequencies. All of these choices leads to a bewildering number of different models to choose from. For this reason, researchers have often based their model choice on common conventions rather than on which model is most appropriate for their data.
 
 Fortunately, nowadays we can be more sophisticated in our modeling choices and let the data inform us about which model is most appropriate using Bayesian model averaging. In this tutorial, we will use BEAST2's model averaging tool **bModelTest** {% cite Bouckaert2017 --file Substitution-model-averaging/refs %} to select the most appropriate substitution model for the primate mitochondrial data set we already saw in the introductory tutorial. **bModelTest** uses reversible jump MCMC (rjMCMC), which allows the Markov chain to jump between states representing different possible substitution models, much like we jump between different parameter states in standard Bayesian MCMC inference. 
 This allows us to treat the substitution model as a nuisance parameter and integrate over all _available_ (more on this later) substitution models while simultaneously estimating the phylogeny and other model parameters. Thus, parameter estimates are effectively averaged over different substitution models, weighted by the support of each model.
@@ -123,7 +123,7 @@ We will continue analyzing the primate mitochondrial data set from the introduct
 
 ## Setting up the analysis in BEAUti
 
-In this tutorial, we will simplify things by having all four partitions in the alignment evolve under the same Site, Clock and Tree models.  
+Depending on which version of the `primate-mtDNA.nex` file you downloaded you will find four partions (noncoding, 1stpos, 2ndpos, and 3rdpos) or five partions (coding, noncoding, 1stpos, 2ndpos, and 3rdpos). In case your file contains the  _coding_ partition (which actually consists of all 1st, 2nd, and 3rd positions), you have to delete it by selecting the respective row and clicking on the `-` on the bottom left. We will work with the four partions noncoding, 1stpos, 2ndpos, and 3rdpos. Additionally, we will simplify things by having all four partitions in the alignment evolve under the same Site, Clock and Tree models.  
 
 
 > In the **Partitions** panel select all four partitions (with **shift+click**) and then click **Link Site Models**, **Link Clock Models** and **Link Trees**. You should rename each model something more informative than noncoding, such as **site**, **clock** and **tree**. Rename models by **double-clicking** on the drop-down boxes.
