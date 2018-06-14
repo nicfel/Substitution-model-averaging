@@ -20,7 +20,7 @@ Before running any phylogenetic analysis in BEAST, we need to decide on a model 
 		- & r_{ac} & r_{ag} & r_{at} \\
 		r_{ca} & - & r_{cg} & r_{ct} \\
 		r_{ga} & r_{gc} & - & r_{gt} \\
-		r_{ta} & r_{tc} & r_{tg} & - \\
+		r_{ta} & r_{tc} & r_{tg} & -
 	\end{pmatrix}
 
 %}
@@ -34,28 +34,28 @@ Here, {% eqinline r_{xy} %} describes the rate of nucleotide change from {% eqin
         - & r_{ac}\pi_{C} & r_{ag}\pi_{G} & r_{at}\pi_{T} \\
         r_{ac}\pi_{A}& - & r_{cg}\pi_{G}& r_{ct}\pi_{T}\\
         r_{ag}\pi_{A}& r_{cg}\pi_{C} & - & r_{gt}\pi_{T} \\
-        r_{at}\pi_{A}& r_{ct}\pi_{C}& r_{gt}\pi_{G} & - \\
+        r_{at}\pi_{A}& r_{ct}\pi_{C}& r_{gt}\pi_{G} & -
     \end{pmatrix}
     =
     \begin{pmatrix}
         - & r_{ac} & r_{ag} & r_{at} \\
         r_{ac} & - & r_{cg} & r_{ct} \\
         r_{ag} & r_{cg} & - & r_{gt} \\
-        r_{at} & r_{ct} & r_{gt} & - \\
+        r_{at} & r_{ct} & r_{gt} & -
     \end{pmatrix}
     \times
     \begin{pmatrix}
         \pi_{C} & 0 & 0 & 0 \\
         0 & \pi_{A} & 0 & 0 \\
         0 & 0 & \pi_{T} & 0 \\
-        0 & 0 & 0& \pi_{G}  \\
+        0 & 0 & 0& \pi_{G}
     \end{pmatrix}
     
 %}
 
-where {% eqinline \pi_{X} %} is the equilibrium frequency of nucleotide {% X %}. The latter is a decomposition that comes in handy to understand the parameterisation used in **bModelTest**.
+where {% eqinline \pi_{X} %} is the equilibrium frequency of nucleotide {% X %}. The latter decomposition comes in handy to understand the parameterisation used in **bModelTest**, here the first matrix is referred to as _rate matrix_ and the second is a _diagonal matrix_ with the equilibrium frequencies on the diagonal.
 
-The different named substitution models (e.g. JC69, HKY, TN93 and GTR) group these rates into different categories. For example, the JC69 model groups all rates together into a single rate category and assumes equal equilibrium frequencies whereas the GTR model assigns each rate to a different category and assumes a different equilibrium frequency for each nucleotide. We are therefore faced with the difficult choice of deciding *a priori* which one of these substitution models is most appropriate for our data.
+The different named substitution models (e.g. JC69, HKY, TN93 and GTR) group these rates into different categories. _Group_ here means that the rates are the same. For example, the JC69 model groups all rates together into a single rate category, i.e. {% eqinline r_{ac}=r_{ag}=r_{at}=r_{cg}=r_{ct}=r_{gt} %}.  In addition, this model assumes equal equilibrium frequencies. The GTR model, however, assigns each rate to a different category and assumes a different equilibrium frequency for each nucleotide. We are therefore faced with the difficult choice of deciding *a priori* which one of these substitution models is most appropriate for our data.
 
 
 > **Topic for discussion:** In terms of phylogenetic inference, what would the consequences be of picking a substitution model that is overparameterized (too complex) for a given data set? What would the consequences be of picking a model that is underparameterized? 
@@ -144,7 +144,7 @@ The Partition window should now look like [Figure 2](#fig:partitions).
 Now we want to set up our Site Model to run the model averaging analysis.
 
 
-> Click the **Site Model** tab in BEAUti and then select the drop-down box at the top which says **Gamma Site Model** and change it to **BEAST ModelTest** ([Figure 3](#fig:siteModel)). 
+> Click the **Site Model** tab in BEAUti and then select the drop-down box at the top which says **Gamma Site Model** and change it to **BEAST Model Test** ([Figure 3](#fig:siteModel)).
 > 
 
 <figure>
@@ -155,12 +155,12 @@ Now we want to set up our Site Model to run the model averaging analysis.
 <br>
 
 
-In the lower drop-down box we will keep **transitionTransversionSplit** selected. This tells bModelTest to only consider substitution models that differentiate between transitions (A {% eqinline \rightarrow %} G and C {% eqinline \rightarrow %} T) and transversions (all other substitutions). Considering all the different ways we can group the rates in the substitution matrix, there are a total of 203 reversible models with symmetric matrices {% cite Bouckaert2017 --file Substitution-model-averaging/refs %}. However, if we only consider models that do not group transitions together with transversions, there are only 31 models. Selecting **transitionTransversionSplit** therefore dramatically reduces the number of models that we need to explore.
+In the lower drop-down box we will keep **transitionTransversionSplit** selected. This tells bModelTest to only consider substitution models that differentiate between transitions (A {% eqinline \leftrightarrow %} G and C {% eqinline \leftrightarrow %} T) and transversions (all other substitutions). If all possibilities to group the rates in the substitution rate matrix, independent of whether substitutions are transitions or transersions, there are a total of 203 reversible models with symmetric rate matrices {% cite Bouckaert2017 --file Substitution-model-averaging/refs %}. However, if we only consider models that group transitions together with transitions but not with transversions, there are only 31 models. Selecting **transitionTransversionSplit** therefore dramatically reduces the number of models that we need to explore.
 
 In the **Clock Model** and **Prior** tabs, we do not need to change any of the default settings for this tutorial.
 
 
-> Click the **MCMC** tab in BEAUti. Change the chain length to 5,000,000 and the sampling frequency to every 5,000 by changing **Log Every** under **tracelog** and **treelog**. This will help us to avoid autocorrelation by ensuring that we are not sampling too frequently. (You can also increase **Log Every** under **screenlog** to keep BEAST2 from producing too much screen output). Change the **tracelog** and **treelog** file names to `primate-mtDNA-bMT` and click **File > Save As** and save as `primate-mtDNA-bMT.xml`.
+> Click the **MCMC** tab in BEAUti. Change the chain length to 5 000 000 and the sampling frequency to every 5 000 by changing **Log Every** under **tracelog** and **treelog**. This will help us to avoid autocorrelation by ensuring that we are not sampling too frequently. (You can also increase **Log Every** under **screenlog** to keep BEAST2 from producing too much screen output). Change the **tracelog** file name to `primate-mtDNA-bMT.log` and the **treelog** file name to `primate-mtDNA-bMT.trees`. Click **File > Save As** and save as `primate-mtDNA-bMT.xml`. You can now close BEAUTi.
 > 
 
 
@@ -230,7 +230,7 @@ Now click on the **Estimates** tab above. This frequency histogram shows us how 
 > **Topic for discussion:** Did the chain ever visit the JC69 model? Why not?
 > 
 
-We can also use the output of our analysis to see if a model with (gamma) rate heterogeneity and/or a proportion of invariant sites is supported. If we select **hasGammaRates** in the window on the left and then click **Estimates** we see the proportion of time the chain spent in a model state with rate heterogeneity on (1) versus off (0), and thus the posterior support for a model with rate heterogeneity. Here, the chain seems to remain in a state with rate heterogeneity on, indicating very strong support for heterogeneity ([Figure 8](#fig:hasGammaRates)).  We can also select **hasInvariableSites** to see if a model with invariant sites is supported. Here we see that the model spends more time in a model state with invariant sites off (0) than on (1), indicating that the presence of invariant sites are not as strongly supported important ([Figure 9](#fig:hasInvariableSites)). Note that we can also look at the traces for **BMT_gammaShape** and **BMT_ProportionInvariant** to see which values of these two parameters the chain visited.
+We can also use the output of our analysis to see if a model with (gamma) rate heterogeneity and/or a proportion of invariant sites is supported. If we select **hasGammaRates** in the window on the left and then click **Estimates** we see the proportion of time the chain spent in a model state with rate heterogeneity on (1) versus off (0), and thus the posterior support for a model with rate heterogeneity. Here, the chain seems to remain in a state with rate heterogeneity on, indicating very strong support for heterogeneity ([Figure 8](#fig:hasGammaRates)).  We can also select **hasInvariableSites** to see if a model with invariant sites is supported. Here we see that the model spends more time in a model state with invariant sites off (0) than on (1), indicating that the presence of invariant sites are not as strongly supported ([Figure 9](#fig:hasInvariableSites)). Note that we can also look at the traces for **BMT_gammaShape** and **BMT_ProportionInvariant** to see which values of these two parameters the chain visited.
 
 There are a few other things we can look at in Tracer as well:
 
