@@ -32,23 +32,23 @@ Here, {% eqinline r_{xy} %} describes the rate of nucleotide change from {% eqin
     Q =
     \begin{pmatrix}
         - & r_{ac}\pi_{C} & r_{ag}\pi_{G} & r_{at}\pi_{T} \\
-        r_{ac} \pi_{A}& - & r_{cg} \pi_{G}& r_{ct} \pi_{T}\\
-        r_{ag} \pi_{A}& r_{cg}\pi_{C} & - & r_{gt}\pi_{T} \\
-        r_{at} \pi_{A}& r_{ct} \pi_{C}& r_{gt}\pi_{G} & - \\
+        r_{ac}\pi_{A}& - & r_{cg}\pi_{G}& r_{ct}\pi_{T}\\
+        r_{ag}\pi_{A}& r_{cg}\pi_{C} & - & r_{gt}\pi_{T} \\
+        r_{at}\pi_{A}& r_{ct}\pi_{C}& r_{gt}\pi_{G} & - \\
     \end{pmatrix}
     =
     \begin{pmatrix}
         - & r_{ac} & r_{ag} & r_{at} \\
-        r_{ca} & - & r_{cg} & r_{ct} \\
-        r_{ga} & r_{gc} & - & r_{gt} \\
-        r_{ta} & r_{tc} & r_{tg} & - \\
+        r_{ac} & - & r_{cg} & r_{ct} \\
+        r_{ag} & r_{cg} & - & r_{gt} \\
+        r_{at} & r_{ct} & r_{gt} & - \\
     \end{pmatrix}
     \times
     \begin{pmatrix}
-        \pi_{C} &0 &0&0 \\
-        0 & \pi_{A}& 0& 0\\
-        0& 0&\pi_{T} & 0\\
-        0& 0& 0&\pi_{G}  \\
+        \pi_{C} & 0 & 0 & 0 \\
+        0 & \pi_{A} & 0 & 0 \\
+        0 & 0 & \pi_{T} & 0 \\
+        0 & 0 & 0& \pi_{G}  \\
     \end{pmatrix}
     
 %}
