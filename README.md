@@ -3,8 +3,8 @@ author: David A. Rasmussen,Carsten Magnus,Remco Bouckaert
 beastversion: 2.x
 title: Substitution-model-averaging
 level: Intermediate
-beastversion: 2.4.7
-tracerversion: 1.6.0
+beastversion: 2.5.0
+tracerversion: 1.7.0
 bmodeltestversion: 1.0.4 
 ---
 
@@ -18,12 +18,40 @@ Before running any phylogenetic analysis in BEAST, we need to decide on a model 
 	Q =
 	\begin{pmatrix}
 		- & r_{ac} & r_{ag} & r_{at} \\
-		r_{ac} & - & r_{cg} & r_{ct} \\
-		r_{ag} & r_{cg} & - & r_{gt} \\
-		r_{at} & r_{ct} & r_{gt} & - \\
+		r_{ca} & - & r_{cg} & r_{ct} \\
+		r_{ga} & r_{gc} & - & r_{gt} \\
+		r_{ta} & r_{tc} & r_{tg} & - \\
 	\end{pmatrix}
 
 %}
+
+Here, {% eqinline r_{xy} %} describes the rate of nucleotide change from {% eqinline x \to y%}. Due to mathematical reasons, only _time reversible_ models are considered by BEAST. The substitution rate matrix in time reversible models takes the form:
+
+{% eq
+
+Q =
+\begin{pmatrix}
+- & r_{ac}\pi_{C} & r_{ag}\pi_{G} & r_{at}\pi_{T} \\
+r_{ac} \pi_{A}& - & r_{cg} \pi_{G}& r_{ct} \pi_{T}\\
+r_{ag} \pi_{A}& r_{cg}\pi_{C} & - & r_{gt}\pi_{T} \\
+r_{at} \pi_{A}& r_{ct} \pi_{C}& r_{gt}\pi_{G} & - \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+- & r_{ac} & r_{ag} & r_{at} \\
+r_{ca} & - & r_{cg} & r_{ct} \\
+r_{ga} & r_{gc} & - & r_{gt} \\
+r_{ta} & r_{tc} & r_{tg} & - \\
+\end{pmatrix}\times
+\begin{pmatrix}
+pi_{C} &0 &0&0 \\
+0 & \pi_{A}& 0& 0\\
+0& 0&\pi_{T} & 0\\
+0& 0& 0&\pi_{G}  \\
+\end{pmatrix}
+%}
+
+where {% eqinline \pi_{X} %} is the equilibrium frequency of nucleotide {% X%}. The latter is a decomposition that comes in handy to understand the parameterisation used in **bModelTest**.
 
 The different named substitution models (e.g. JC69, HKY, TN93 and GTR) group these rates into different categories. For example, the JC69 model groups all rates together into a single rate category and assumes equal equilibrium frequencies whereas the GTR model assigns each rate to a different category and assumes a different equilibrium frequency for each nucleotide. We are therefore faced with the difficult choice of deciding *a priori* which one of these substitution models is most appropriate for our data.
 
