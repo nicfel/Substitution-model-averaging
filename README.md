@@ -53,7 +53,7 @@ Here, {% eqinline r_{xy} %} describes the rate of nucleotide change from {% eqin
     
 %}
 
-where {% eqinline \pi_{X} %} is the equilibrium frequency of nucleotide {% X %}. The latter decomposition comes in handy to understand the parameterisation used in **bModelTest**, here the first matrix is referred to as _rate matrix_ and the second is a _diagonal matrix_ with the equilibrium frequencies on the diagonal.
+where {% eqinline \pi_{X} %} is the equilibrium frequency of nucleotide {% eqinline X %}. The latter decomposition comes in handy to understand the parameterisation used in **bModelTest**, here the first matrix is referred to as _rate matrix_ and the second is a _diagonal matrix_ with the equilibrium frequencies on the diagonal.
 
 The different named substitution models (e.g. JC69, HKY, TN93 and GTR) group these rates into different categories. _Group_ here means that the rates are the same. For example, the JC69 model groups all rates together into a single rate category, i.e. {% eqinline r_{ac}=r_{ag}=r_{at}=r_{cg}=r_{ct}=r_{gt} %}.  In addition, this model assumes equal equilibrium frequencies. The GTR model, however, assigns each rate to a different category and assumes a different equilibrium frequency for each nucleotide. We are therefore faced with the difficult choice of deciding *a priori* which one of these substitution models is most appropriate for our data.
 
