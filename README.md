@@ -25,33 +25,35 @@ Before running any phylogenetic analysis in BEAST, we need to decide on a model 
 
 %}
 
-Here, {% eqinline r_{xy} %} describes the rate of nucleotide change from {% eqinline x \to y%}. Due to mathematical reasons, only _time reversible_ models are considered by BEAST. The substitution rate matrix in time reversible models takes the form:
+Here, {% eqinline r_{xy} %} describes the rate of nucleotide change from {% eqinline x \to y %}. Due to mathematical reasons, only _time reversible_ models are considered by BEAST. The substitution rate matrix in time reversible models takes the form:
 
 {% eq
 
-Q =
-\begin{pmatrix}
-- & r_{ac}\pi_{C} & r_{ag}\pi_{G} & r_{at}\pi_{T} \\
-r_{ac} \pi_{A}& - & r_{cg} \pi_{G}& r_{ct} \pi_{T}\\
-r_{ag} \pi_{A}& r_{cg}\pi_{C} & - & r_{gt}\pi_{T} \\
-r_{at} \pi_{A}& r_{ct} \pi_{C}& r_{gt}\pi_{G} & - \\
-\end{pmatrix}
-=
-\begin{pmatrix}
-- & r_{ac} & r_{ag} & r_{at} \\
-r_{ca} & - & r_{cg} & r_{ct} \\
-r_{ga} & r_{gc} & - & r_{gt} \\
-r_{ta} & r_{tc} & r_{tg} & - \\
-\end{pmatrix}\times
-\begin{pmatrix}
-pi_{C} &0 &0&0 \\
-0 & \pi_{A}& 0& 0\\
-0& 0&\pi_{T} & 0\\
-0& 0& 0&\pi_{G}  \\
-\end{pmatrix}
+    Q =
+    \begin{pmatrix}
+        - & r_{ac}\pi_{C} & r_{ag}\pi_{G} & r_{at}\pi_{T} \\
+        r_{ac} \pi_{A}& - & r_{cg} \pi_{G}& r_{ct} \pi_{T}\\
+        r_{ag} \pi_{A}& r_{cg}\pi_{C} & - & r_{gt}\pi_{T} \\
+        r_{at} \pi_{A}& r_{ct} \pi_{C}& r_{gt}\pi_{G} & - \\
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        - & r_{ac} & r_{ag} & r_{at} \\
+        r_{ca} & - & r_{cg} & r_{ct} \\
+        r_{ga} & r_{gc} & - & r_{gt} \\
+        r_{ta} & r_{tc} & r_{tg} & - \\
+    \end{pmatrix}
+    \times
+    \begin{pmatrix}
+        \pi_{C} &0 &0&0 \\
+        0 & \pi_{A}& 0& 0\\
+        0& 0&\pi_{T} & 0\\
+        0& 0& 0&\pi_{G}  \\
+    \end{pmatrix}
+    
 %}
 
-where {% eqinline \pi_{X} %} is the equilibrium frequency of nucleotide {% X%}. The latter is a decomposition that comes in handy to understand the parameterisation used in **bModelTest**.
+where {% eqinline \pi_{X} %} is the equilibrium frequency of nucleotide {% X %}. The latter is a decomposition that comes in handy to understand the parameterisation used in **bModelTest**.
 
 The different named substitution models (e.g. JC69, HKY, TN93 and GTR) group these rates into different categories. For example, the JC69 model groups all rates together into a single rate category and assumes equal equilibrium frequencies whereas the GTR model assigns each rate to a different category and assumes a different equilibrium frequency for each nucleotide. We are therefore faced with the difficult choice of deciding *a priori* which one of these substitution models is most appropriate for our data.
 
@@ -123,7 +125,7 @@ We will continue analyzing the primate mitochondrial data set from the introduct
 
 ## Setting up the analysis in BEAUti
 
-Depending on which version of the `primate-mtDNA.nex` file you downloaded you will find four partions (noncoding, 1stpos, 2ndpos, and 3rdpos) or five partions (coding, noncoding, 1stpos, 2ndpos, and 3rdpos). In case your file contains the  _coding_ partition (which actually consists of all 1st, 2nd, and 3rd positions), you have to delete it by selecting the respective row and clicking on the `-` on the bottom left. We will work with the four partions noncoding, 1stpos, 2ndpos, and 3rdpos. Additionally, we will simplify things by having all four partitions in the alignment evolve under the same Site, Clock and Tree models.  
+Depending on which version of the `primate-mtDNA.nex` file you downloaded you will find four partions (noncoding, 1stpos, 2ndpos, and 3rdpos) or five partions (coding, noncoding, 1stpos, 2ndpos, and 3rdpos). In case your file contains the  _coding_ partition (which actually consists of all 1st, 2nd, and 3rd positions), you have to delete it by selecting the respective row and clicking on the `-` on the bottom left. We will work with the four partions noncoding, 1stpos, 2ndpos, and 3rdpos. Additionally, we will simplify things by having all four partitions in the alignment evolve under the same Site, Clock and Tree models.
 
 
 > In the **Partitions** panel select all four partitions (with **shift+click**) and then click **Link Site Models**, **Link Clock Models** and **Link Trees**. You should rename each model something more informative than noncoding, such as **site**, **clock** and **tree**. Rename models by **double-clicking** on the drop-down boxes.
