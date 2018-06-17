@@ -45,10 +45,10 @@ Here, {% eqinline r_{xy} %} describes the rate of nucleotide change from {% eqin
     \end{pmatrix}
     \times
     \begin{pmatrix}
-        \pi_{C} & 0 & 0 & 0 \\
-        0 & \pi_{A} & 0 & 0 \\
-        0 & 0 & \pi_{T} & 0 \\
-        0 & 0 & 0& \pi_{G}
+        \pi_{A} & 0 & 0 & 0 \\
+        0 & \pi_{C} & 0 & 0 \\
+        0 & 0 & \pi_{G} & 0 \\
+        0 & 0 & 0& \pi_{T}
     \end{pmatrix}
     
 %}
