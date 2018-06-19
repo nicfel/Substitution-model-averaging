@@ -179,17 +179,15 @@ In the **Clock Model** and **Prior** tabs, we do not need to change any of the d
 
 While BEAST is running consider the following discussion points.
 
-We did not check **estimate** in the box next to the Mutation Rate in the **Site Model** tab. Doing so makes no difference, since BEAUti constrains the mean mutation rate of all partitions to be equal to 1 (by default). Since we linked the substitution model across all partitions we effectively have only one partition, thus the mutation rate is fixed to 1. 
+We did not check **estimate** in the box next to the Mutation Rate in the **Site Model** tab. Doing so makes no difference, since BEAUti constrains the mean substitution rate of all partitions to be equal to 1 (by default). Since we linked the substitution model across all partitions we effectively have only one partition, thus the substitution rate is fixed to 1. 
 
 Note that BEAUti (by default) does not allow us to estimate the clock rate in the **Clock Model** tab. In this analysis we only have contemporaneously sampled sequences and we did not set a calibration node as in the introductory tutorial. Thus, we have no temporal information and the clock rate is not uniquely identifiable. To make the model identifiable BEAUti arbitrarily fixes the clock rate to 1.
 
 > **Topics for discussion:** 
->
-> - We cannot estimate the substitution rate, so branches in the tree will not be measured in calendar time. What will be the units for branch lengths in the estimated tree?
 > 
-> - Suppose we used individual substitution models for each partition. What does the estimated mutation rate for each partition represent? Would the rate of each partition be identifiable?
+> - Suppose we used individual substitution models for each partition. What does the estimated substitution rate for each partition represent? Would the rate of each partition be identifiable?
 >
-> - What would happen if we removed the constraint to have a mean mutation rate of 1? What if we also added a calibration point?
+> - What would happen if we removed the constraint to have a mean substitution rate of 1? What if we also added a calibration point?
 >
 
 
