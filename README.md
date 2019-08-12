@@ -3,9 +3,9 @@ author: David A. Rasmussen,Carsten Magnus,Remco Bouckaert
 beastversion: 2.x
 title: Substitution-model-averaging
 level: Intermediate
-beastversion: 2.5.0
+beastversion: 2.6.x
 tracerversion: 1.7.0
-bmodeltestversion: 1.1.0
+bmodeltestversion: 1.2.1
 ---
 
 
@@ -233,7 +233,7 @@ We can also use the output of our analysis to see if a model with (gamma) rate h
 There are a few other things we can look at in Tracer as well:
 
 -  **rateAC, ... ,rateGT** are the substitution rates between pairs of nucleotides in the substitution matrix. Note that these rates are averaged over all the models, weighted by the time the Markov chain spent in each model state.
--  **BMT_Rates.1 to 6** are the independent substitution rates used to build up the rate matrix. They are indexed by how they are grouped into the six different possible rate categories (see [Figure 6](#fig:modelIndexes)). Note that not all the models averaged over use all 6 independent rate parameters.
+<!---  **BMT_Rates.1 to 6** are the independent substitution rates used to build up the rate matrix. They are indexed by how they are grouped into the six different possible rate categories (see [Figure 6](#fig:modelIndexes)). Note that not all the models averaged over use all 6 independent rate parameters.-->
 -  **ActiveGammaShape/PropInvariable** are the gamma shape parameter and the proportion of variables sites when active, that is, when **hasGammaRates** and **hasInvariableSites** are selected. To get the estimate of the mean of the shape parameter, divide the mean **ActiveGammaShape** by the mean of **hasGammaRates**.
 -  **hasEqualFreqs** indicates if the chain is in a state with equal nucleotide base frequencies. 
 
@@ -253,13 +253,13 @@ There are a few other things we can look at in Tracer as well:
 </figure>
 <br>
 
-> **Topic for discussion:** Why does **BMT_Rates.6** mix poorly? 
+<!-- > **Topic for discussion:** Why does **BMT_Rates.6** mix poorly?
 >
 > **Hint:** Look at the table of substitution models and the distribution and trace of **BMT_ModelIndicator** in Tracer. 
 >
 > **Bonus hint:** Look at the trace for **BMT_Rates.6** and plot the joint-marginal between **BMT_Rates.1** and **BMT_Rates.2**.
 >
-
+ -->
 
 Select pairs of the **rateAC, ... ,rateGT** parameters (using **shift+click**) and click on the **Joint-Marginal** tab to investigate parameter correlations ([Figure 10](#fig:rateCorrelations)). Try looking at **rateAT** vs. **rateCG** and **rateCG** vs **rateGT**). 
 
@@ -272,9 +272,10 @@ Select pairs of the **rateAC, ... ,rateGT** parameters (using **shift+click**) a
 
 > **Topic for discussion:** It appears that some pairs of the rate parameters are highly correlated for some samples and uncorrelated for the rest. What is happening here? Should we be worried about these parameter correlations? 
 >
+<!--
 > Do you also see correlations between the **BMT_Rates.1 to 6** parameters?
 >
-
+-->
 
 ## Analyzing the output using BModelAnalyzer
 
